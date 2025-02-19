@@ -1,67 +1,89 @@
-/// src/components/Register.jsx
-import { useState } from "react";
-import { Box, 
-        Button, 
-        FormControl, 
-        FormErrorMessage, 
-        FormLabel, 
-        Input, InputGroup, 
-        InputRightElement 
-      } from "@chakra-ui/react";
+import { useState, useEffect } from "react";
+import {
+  Box,
+  Button,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  Input,
+  InputGroup,
+  InputRightElement,
+  IconButton,
+  Heading
+} from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../Context/AuthContext";  // Asegúrate de que esta ruta sea correcta
+import { useAuth } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export const Register = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
-  const { register, formState, handleSubmit } = useForm();
-  const { errors } = formState;
-  const { registerUser, error } = useAuth();  // Asegúrate de que esto esté funcionando
+  const { register, formState: { errors }, handleSubmit } = useForm();
+  const { registerUser, error, user } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirigir si el usuario ya está autenticado
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const onSubmit = (data) => {
-    const { username, password } = data;  // Asegúrate de usar los nombres correctos
-    registerUser({ email: username, password });  // Llamar a registerUser desde el contexto
+    registerUser({ email: data.email, password: data.password });
   };
 
+  if (user) return null; // No muestra el formulario si ya está autenticado
+
   return (
-    <Box maxW="400px" mx="auto" mt="10">
+    <Box
+      maxW="400px"
+      mx="auto"
+      mt="10"
+      p={6}
+      bgGradient="linear(to-r, #ff7e5f, #feb47b)"
+      borderRadius="md"
+      boxShadow="lg"
+      color="white"
+    >
+      <Heading mb={4} textAlign="center">Registro</Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FormControl isInvalid={errors.username}>
-          <FormLabel htmlFor="username">Correo electrónico</FormLabel>
+        <FormControl isInvalid={errors.email}>
+          <FormLabel>Correo electrónico</FormLabel>
           <Input
             type="email"
-            id="username"
-            placeholder="Ingresa tu correo electrónico"
-            {...register("username", { required: "Este campo es obligatorio" })}
+            placeholder="Ingresa tu correo"
+            {...register("email", { required: "Campo obligatorio" })}
+            bg="white"
+            color="black"
           />
-          <FormErrorMessage>{errors.username?.message}</FormErrorMessage>
+          <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
         </FormControl>
 
-        <FormControl isInvalid={errors.password}>
-          <FormLabel htmlFor="password">Contraseña</FormLabel>
-          <InputGroup size="md">
+        <FormControl isInvalid={errors.password} mt={4}>
+          <FormLabel>Contraseña</FormLabel>
+          <InputGroup>
             <Input
-              id="password"
-              pr="4.5rem"
               type={show ? "text" : "password"}
-              placeholder="Ingrese su contraseña"
-              {...register("password", { required: "Este campo es obligatorio" })}
+              placeholder="Ingresa tu contraseña"
+              {...register("password", { required: "Campo obligatorio" })}
+              bg="white"
+              color="black"
             />
-            <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" onClick={handleClick}>
-                {show ? "Hide" : "Show"}
-              </Button>
+            <InputRightElement>
+              <IconButton icon={show ? <ViewOffIcon /> : <ViewIcon />} onClick={handleClick} />
             </InputRightElement>
           </InputGroup>
           <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
         </FormControl>
 
-        <Button mt={4} colorScheme="teal" type="submit" width="100%">
+        <Button mt={6} bg="white" color="#ff7e5f" type="submit" width="100%">
           Registrarme
         </Button>
       </form>
 
-      {error && <Box color="red.500" mt={4}>{error}</Box>}  {/* Muestra los errores */}
+      {error && <Box color="red.500" mt={4}>{error}</Box>}
     </Box>
   );
 };
