@@ -1,4 +1,3 @@
-// src/pages/auth/Login.jsx
 import { useState, useEffect } from "react";
 import {
   Box,
@@ -8,27 +7,25 @@ import {
   FormLabel,
   Input,
   InputGroup,
-  InputRightElement
+  InputRightElement,
+  IconButton,
+  Heading
 } from "@chakra-ui/react";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useForm } from "react-hook-form";
-import { useAuth } from "../../Context/AuthContext"; // Asegura que la ruta sea correcta
-import { useNavigate } from "react-router-dom"; // Para redirigir al usuario
+import { useAuth } from "../../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
-  const navigate = useNavigate(); // Hook para redirigir
-
-  // Inicializamos react-hook-form
+  const navigate = useNavigate();
   const { register, handleSubmit, formState: { errors } } = useForm();
-
-  // Obtenemos la función login y el usuario desde el AuthContext
   const { login, user } = useAuth();
 
-  // Si el usuario ya está logueado, lo redirigimos al Home
   useEffect(() => {
     if (user) {
-      navigate("/"); // Redirige a la página principal
+      navigate("/");
     }
   }, [user, navigate]);
 
@@ -40,48 +37,64 @@ export const Login = () => {
     }
   };
 
-  // Si el usuario ya está autenticado, no muestra el formulario
   if (user) {
     return null;
   }
 
   return (
-    <Box maxW="400px" mx="auto" mt="10">
+    <Box
+      maxW="400px"
+      mx="auto"
+      mt="10"
+      p={6}
+      bgGradient="linear(to-r, #ff7e5f, #feb47b)" // Degradado igual al Footer
+      borderRadius="md"
+      boxShadow="lg"
+      color="white"
+    >
+      <Heading mb={4} textAlign="center">Iniciar Sesión</Heading>
       <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Campo para el correo electrónico */}
         <FormControl isInvalid={errors.email}>
-          <FormLabel htmlFor="email">Correo electrónico</FormLabel>
+          <FormLabel>Correo electrónico</FormLabel>
           <Input
             type="email"
-            id="email"
             placeholder="Ingresa tu correo electrónico"
             {...register("email", { required: "Este campo es obligatorio" })}
+            bg="white"
+            color="black"
+            borderColor="white"
+            focusBorderColor="white"
           />
           <FormErrorMessage>{errors.email?.message}</FormErrorMessage>
         </FormControl>
 
-        {/* Campo para la contraseña */}
         <FormControl isInvalid={errors.password} mt={4}>
-          <FormLabel htmlFor="password">Contraseña</FormLabel>
-          <InputGroup size="md">
+          <FormLabel>Contraseña</FormLabel>
+          <InputGroup>
             <Input
-              id="password"
               pr="4.5rem"
               type={show ? "text" : "password"}
               placeholder="Ingresa tu contraseña"
               {...register("password", { required: "Este campo es obligatorio" })}
+              bg="white"
+              color="black"
+              borderColor="white"
+              focusBorderColor="white"
             />
-            <InputRightElement width="4.5rem">
-              <Button h="1.75rem" size="sm" onClick={handleClick}>
-                {show ? "Ocultar" : "Mostrar"}
-              </Button>
+            <InputRightElement>
+              <IconButton
+                icon={show ? <ViewOffIcon /> : <ViewIcon />}
+                onClick={handleClick}
+                variant="ghost"
+                color="white"
+                aria-label="Mostrar/Ocultar contraseña"
+              />
             </InputRightElement>
           </InputGroup>
           <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
         </FormControl>
 
-        {/* Botón para enviar el formulario */}
-        <Button mt={4} colorScheme="teal" type="submit" width="100%">
+        <Button mt={6} bg="white" color="#ff7e5f" _hover={{ bg: "#feb47b" }} type="submit" width="100%">
           Iniciar sesión
         </Button>
       </form>

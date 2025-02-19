@@ -44,16 +44,15 @@ export const ProductsList = () => {
     return (
       <Box textAlign="center" mt={10}>
         <Text fontSize="xl" color="red.500">
-          Debes iniciar sesión para ver los productos
+          
         </Text>
       </Box>
     );
   }
 
-  // Si hay un producto seleccionado, mostrar solo su vista detallada
   if (selectedProduct) {
     return (
-      <Box bg="white" minH="100vh" p={8} textAlign="center">
+      <Box bg="#f8f9fa" minH="100vh" p={8} textAlign="center">
         <IconButton
           icon={<ArrowBackIcon />}
           aria-label="Volver"
@@ -62,19 +61,20 @@ export const ProductsList = () => {
         />
         <Box
           borderWidth="1px"
-          borderRadius="lg"
+          borderRadius="2xl"
           overflow="hidden"
           p={6}
-          boxShadow="lg"
+          boxShadow="xl"
           maxW="400px"
           mx="auto"
+          bg="white"
         >
           <Image
             src={selectedProduct.url}
             alt={selectedProduct.nombre}
-            objectFit="cover"
+            objectFit="contain"
             width="100%"
-            maxH="250px" // 🔥 Evita que se vea demasiado grande
+            maxHeight="250px"
             borderRadius="md"
           />
           <Text mt={3} fontSize="xl" fontWeight="bold">
@@ -87,7 +87,6 @@ export const ProductsList = () => {
             {selectedProduct.descripcion}
           </Text>
 
-          {/* Contador de cantidad */}
           <HStack justify="center" mt={4}>
             <IconButton
               icon={<MinusIcon />}
@@ -102,14 +101,13 @@ export const ProductsList = () => {
             />
           </HStack>
 
-          {/* Botón de añadir al carrito con color del Header */}
           <Button
             mt={4}
-            bgGradient="linear(to-r, #ff7e5f, #feb47b)"
+            bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
             color="white"
             size="lg"
             width="100%"
-            _hover={{ bgGradient: "linear(to-r, #feb47b, #ff7e5f)" }}
+            _hover={{ bgGradient: "linear(to-r, #fad0c4, #ff9a9e)" }}
           >
             🛒 Añadir al carrito
           </Button>
@@ -119,50 +117,64 @@ export const ProductsList = () => {
   }
 
   return (
-    <Box bg="white" minH="100vh" p={8}>
+    <Box bg="#f8f9fa" minH="100vh" p={10} pb={20}>
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" mb={6}>
-        Productos Disponibles
+        🛍️ Productos Disponibles
       </Text>
 
-      <Grid templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }} gap={6}>
+      <Grid
+        templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+        gap={8}
+        justifyItems="center"
+      >
         {products.map((product) => (
           <Box
             key={product.id}
             borderWidth="1px"
-            borderRadius="lg"
+            borderRadius="2xl"
             overflow="hidden"
-            p={4}
-            boxShadow="lg"
-            transition="all 0.3s"
-            _hover={{ transform: "scale(1.03)", cursor: "pointer" }}
+            p={5}
+            boxShadow="xl"
+            transition="all 0.3s ease-in-out"
+            _hover={{
+              transform: "scale(1.05)",
+              boxShadow: "2xl",
+            }}
+            bg="white"
+            width="100%"
+            maxW="320px"
+            textAlign="center"
+            cursor="pointer"
             onClick={() => {
               setSelectedProduct(product);
-              setQuantity(1); // Reiniciar cantidad al seleccionar un nuevo producto
+              setQuantity(1);
             }}
           >
-            <Image
-              src={product.url}
-              alt={product.nombre}
-              objectFit="cover"
-              width="100%"
-              maxH="180px" // 🔥 Evita que se vea demasiado grande
-              borderRadius="md"
-            />
-            <Text mt={3} fontSize="lg" fontWeight="bold">
+            {/* 📌 Contenedor de la imagen con tamaño controlado */}
+            <Box height="200px" overflow="hidden" borderRadius="xl">
+              <Image
+                src={product.url}
+                alt={product.nombre}
+                objectFit="contain"
+                width="100%"
+                height="100%"
+              />
+            </Box>
+
+            <Text mt={4} fontSize="lg" fontWeight="bold">
               {product.nombre}
             </Text>
-            <Text fontWeight="bold" fontSize="xl" mt={1} color="orange.500">
+            <Text fontSize="xl" fontWeight="bold" mt={1} color="orange.500">
               ${product.precio}
             </Text>
 
-            {/* Botón de añadir al carrito con color del Header */}
             <Button
-              mt={3}
-              bgGradient="linear(to-r, #ff7e5f, #feb47b)"
+              mt={4}
+              bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
               color="white"
-              size="sm"
-              width="100%"
-              _hover={{ bgGradient: "linear(to-r, #feb47b, #ff7e5f)" }}
+              size="md"
+              width="full"
+              _hover={{ bgGradient: "linear(to-r, #fad0c4, #ff9a9e)" }}
             >
               🛒 Añadir al carrito
             </Button>
