@@ -137,7 +137,10 @@ export const ProductsList = () => {
             height="300px"
           />
           <Text mt={4} fontSize="xl" fontWeight="bold">
-            {selectedProduct.descripcion}
+            {/* Descripción con el tamaño y color modificados */}
+            <Text fontSize="sm" color="gray.600">
+              {selectedProduct.descripcion}
+            </Text>
           </Text>
           <Text fontSize="2xl" fontWeight="bold" mt={1} color="orange.500">
             ${Number(selectedProduct.precio || 0).toFixed(2)}

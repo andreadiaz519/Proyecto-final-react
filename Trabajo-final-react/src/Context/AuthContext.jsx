@@ -7,7 +7,7 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { useToast } from "@chakra-ui/react";
-import { MdLogout } from "react-icons/md"; // Importa el icono de cierre de sesión
+import { MdLogout } from "react-icons/md"; 
 
 const AuthContext = createContext();
 
