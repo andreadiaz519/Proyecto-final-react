@@ -41,6 +41,13 @@ REACT_APP_APP_ID=tu_app_id
 4. Iniciar el Proyecto
 npm run dev
 
+Autor
+Beatriz Andrea Diaz Santamaria
+
+
+Agradecimientos
+De antemano agradezco a la profe Cintia por su excelente desempeño como maestra, por su paciencia
+y disposicion en todo momento.
 
 
 
