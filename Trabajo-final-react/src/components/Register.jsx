@@ -23,7 +23,7 @@ export const Register = () => {
   const { registerUser, error, user } = useAuth();
   const navigate = useNavigate();
 
-  // Redirigir si el usuario ya está autenticado
+  
   useEffect(() => {
     if (user) {
       navigate("/");
@@ -34,7 +34,7 @@ export const Register = () => {
     registerUser({ email: data.email, password: data.password });
   };
 
-  if (user) return null; // No muestra el formulario si ya está autenticado
+  if (user) return null; 
 
   return (
     <Box

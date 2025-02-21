@@ -7,34 +7,39 @@ import {
   onAuthStateChanged,
 } from "firebase/auth";
 import { useToast } from "@chakra-ui/react";
+import { MdLogout } from "react-icons/md"; // Importa el icono de cierre de sesión
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [cart, setCart] = useState([]); 
+  const [cart, setCart] = useState(() => {
+    const savedCart = localStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
   const toast = useToast();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
-        console.log("Usuario autenticado:", user);
       } else {
         setUser(null);
-        setCart([]); 
-        console.log("No hay usuario autenticado");
+        setCart([]);
       }
     });
 
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+  }, [cart]);
+
   const login = async ({ email, password }) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       setUser(userCredential.user);
-      console.log("Usuario logueado:", userCredential.user);
     } catch (error) {
       console.error("Error al iniciar sesión:", error.code, error.message);
     }
@@ -44,7 +49,6 @@ export const AuthProvider = ({ children }) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       setUser(userCredential.user);
-      console.log("Usuario registrado:", userCredential.user);
       return userCredential.user;
     } catch (error) {
       console.error("Error al registrar usuario:", error.code, error.message);
@@ -55,20 +59,36 @@ export const AuthProvider = ({ children }) => {
     try {
       await signOut(auth);
       setUser(null);
-      setCart([]); 
+      setCart([]);
+
       toast({
         title: "Cierre de sesión exitoso",
-        status: "info",
-        isClosable: true,
+        description: "Has cerrado sesión correctamente.",
         duration: 3000,
+        isClosable: true,
+        position: "top-right",
+        render: () => (
+          <div
+            style={{
+              background: "linear-gradient(to right, #ff7e5f, #feb47b)",
+              color: "white",
+              padding: "16px",
+              borderRadius: "8px",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+          >
+            <MdLogout size={24} />
+            <span>Cierre de sesión exitoso</span>
+          </div>
+        ),
       });
-      console.log("Usuario desconectado");
     } catch (error) {
       console.error("Error al cerrar sesión:", error);
     }
   };
 
-  // Funciones para manejar el carrito
   const agregarAlCarrito = (producto) => {
     setCart((prevCart) => {
       const productoExistente = prevCart.find((item) => item.id === producto.id);
@@ -97,6 +117,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         cart,
+        setCart,
         agregarAlCarrito,
         eliminarDelCarrito,
         vaciarCarrito,

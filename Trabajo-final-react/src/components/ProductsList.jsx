@@ -8,24 +8,31 @@ import {
   Image,
   Button,
   Grid,
-  IconButton,
+  useToast,
+  Input,
   HStack,
 } from "@chakra-ui/react";
-import { ArrowBackIcon, AddIcon, MinusIcon } from "@chakra-ui/icons";
+import { FaCheck } from "react-icons/fa";
 
 export const ProductsList = () => {
-  const { user } = useAuth();
+  const { user, cart, setCart } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const toast = useToast();
+
+  // Estados para el filtrado
+  const [searchText, setSearchText] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
 
   useEffect(() => {
     if (user) {
       const fetchProducts = async () => {
         try {
-          const data = await getProducts();
-          setProducts(data);
+          const productList = await getProducts();
+          setProducts(productList);
         } catch (error) {
           console.error("Error al obtener los productos:", error);
         } finally {
@@ -38,83 +45,71 @@ export const ProductsList = () => {
     }
   }, [user]);
 
+  const addToCart = (product, quantity) => {
+    setCart((prevCart) => {
+      const existingProductIndex = prevCart.findIndex(
+        (item) => item.id === product.id
+      );
+      if (existingProductIndex !== -1) {
+        return prevCart.map((item, index) =>
+          index === existingProductIndex
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      } else {
+        return [...prevCart, { ...product, quantity }];
+      }
+    });
+
+    toast({
+      render: () => (
+        <Box
+          color="white"
+          p={3}
+          bgGradient="linear(to-r, #ff7e5f, #feb47b)"
+          borderRadius="md"
+          boxShadow="xl"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          textAlign="center"
+          maxW="300px"
+          mx="auto"
+        >
+          <FaCheck style={{ marginRight: "8px", fontSize: "20px" }} />
+          <Text fontWeight="bold" fontSize="lg">
+            ¡Agregado al carrito!
+          </Text>
+        </Box>
+      ),
+      duration: 2000,
+      isClosable: true,
+    });
+
+    setSelectedProduct(null);
+  };
+
   if (loading) return <Spinner size="xl" />;
 
   if (!user) {
     return (
       <Box textAlign="center" mt={10}>
-        <Text fontSize="xl" color="red.500">
-          
-        </Text>
+        <Text fontSize="xl" color="red.500"></Text>
       </Box>
     );
   }
 
-  if (selectedProduct) {
-    return (
-      <Box bg="#f8f9fa" minH="100vh" p={8} textAlign="center">
-        <IconButton
-          icon={<ArrowBackIcon />}
-          aria-label="Volver"
-          mb={4}
-          onClick={() => setSelectedProduct(null)}
-        />
-        <Box
-          borderWidth="1px"
-          borderRadius="2xl"
-          overflow="hidden"
-          p={6}
-          boxShadow="xl"
-          maxW="400px"
-          mx="auto"
-          bg="white"
-        >
-          <Image
-            src={selectedProduct.url}
-            alt={selectedProduct.nombre}
-            objectFit="contain"
-            width="100%"
-            maxHeight="250px"
-            borderRadius="md"
-          />
-          <Text mt={3} fontSize="xl" fontWeight="bold">
-            {selectedProduct.nombre}
-          </Text>
-          <Text fontSize="2xl" fontWeight="bold" mt={2} color="orange.500">
-            ${selectedProduct.precio}
-          </Text>
-          <Text fontSize="md" mt={3} color="gray.600">
-            {selectedProduct.descripcion}
-          </Text>
-
-          <HStack justify="center" mt={4}>
-            <IconButton
-              icon={<MinusIcon />}
-              aria-label="Disminuir cantidad"
-              onClick={() => setQuantity(Math.max(1, quantity - 1))}
-            />
-            <Text fontSize="xl">{quantity}</Text>
-            <IconButton
-              icon={<AddIcon />}
-              aria-label="Aumentar cantidad"
-              onClick={() => setQuantity(quantity + 1)}
-            />
-          </HStack>
-
-          <Button
-            mt={4}
-            bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
-            color="white"
-            size="lg"
-            width="100%"
-            _hover={{ bgGradient: "linear(to-r, #fad0c4, #ff9a9e)" }}
-          >
-            🛒 Añadir al carrito
-          </Button>
-        </Box>
-      </Box>
-    );
-  }
+  //Filtrado de productos
+  const filteredProducts = products.filter((product) => {
+    const matchesDescription = product.descripcion
+      .toLowerCase()
+      .includes(searchText.toLowerCase());
+    const matchesMinPrice =
+      minPrice === "" || product.precio >= parseFloat(minPrice);
+    const matchesMaxPrice =
+      maxPrice === "" || product.precio <= parseFloat(maxPrice);
+    return matchesDescription && matchesMinPrice && matchesMaxPrice;
+  });
 
   return (
     <Box bg="#f8f9fa" minH="100vh" p={10} pb={20}>
@@ -122,65 +117,146 @@ export const ProductsList = () => {
         🛍️ Productos Disponibles
       </Text>
 
-      <Grid
-        templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
-        gap={8}
-        justifyItems="center"
-      >
-        {products.map((product) => (
-          <Box
-            key={product.id}
-            borderWidth="1px"
-            borderRadius="2xl"
-            overflow="hidden"
-            p={5}
-            boxShadow="xl"
-            transition="all 0.3s ease-in-out"
-            _hover={{
-              transform: "scale(1.05)",
-              boxShadow: "2xl",
-            }}
-            bg="white"
+      {selectedProduct ? (
+        <Box
+          borderWidth="1px"
+          borderRadius="2xl"
+          overflow="hidden"
+          p={6}
+          boxShadow="2xl"
+          bg="white"
+          maxW="500px"
+          mx="auto"
+          textAlign="center"
+        >
+          <Image
+            src={selectedProduct.url}
+            alt={selectedProduct.descripcion}
+            objectFit="contain"
             width="100%"
-            maxW="320px"
-            textAlign="center"
-            cursor="pointer"
-            onClick={() => {
-              setSelectedProduct(product);
-              setQuantity(1);
-            }}
-          >
-            {/* 📌 Contenedor de la imagen con tamaño controlado */}
-            <Box height="200px" overflow="hidden" borderRadius="xl">
-              <Image
-                src={product.url}
-                alt={product.nombre}
-                objectFit="contain"
-                width="100%"
-                height="100%"
-              />
-            </Box>
-
-            <Text mt={4} fontSize="lg" fontWeight="bold">
-              {product.nombre}
-            </Text>
-            <Text fontSize="xl" fontWeight="bold" mt={1} color="orange.500">
-              ${product.precio}
-            </Text>
-
-            <Button
-              mt={4}
-              bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
-              color="white"
-              size="md"
-              width="full"
-              _hover={{ bgGradient: "linear(to-r, #fad0c4, #ff9a9e)" }}
-            >
-              🛒 Añadir al carrito
-            </Button>
+            height="300px"
+          />
+          <Text mt={4} fontSize="xl" fontWeight="bold">
+            {selectedProduct.descripcion}
+          </Text>
+          <Text fontSize="2xl" fontWeight="bold" mt={1} color="orange.500">
+            ${Number(selectedProduct.precio || 0).toFixed(2)}
+          </Text>
+          <Box mt={4}>
+            <Input
+              type="number"
+              value={quantity}
+              onChange={(e) =>
+                setQuantity(Math.max(1, parseInt(e.target.value) || 1))
+              }
+              min={1}
+              width="80px"
+              textAlign="center"
+            />
           </Box>
-        ))}
-      </Grid>
+          <Button
+            mt={4}
+            bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
+            color="white"
+            size="lg"
+            width="full"
+            _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
+            onClick={() => addToCart(selectedProduct, quantity)}
+          >
+            🛒 Añadir al carrito
+          </Button>
+          <Button
+            mt={2}
+            colorScheme="red"
+            variant="outline"
+            width="full"
+            onClick={() => setSelectedProduct(null)}
+          >
+            Volver
+          </Button>
+        </Box>
+      ) : (
+        <>
+          {/* Filtros */}
+          <Box mb={6}>
+            <HStack spacing={4}>
+              <Input
+                placeholder="Buscar por descripción..."
+                value={searchText}
+                onChange={(e) => setSearchText(e.target.value)}
+              />
+              <Input
+                placeholder="Precio mínimo"
+                type="number"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+              />
+              <Input
+                placeholder="Precio máximo"
+                type="number"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+              />
+            </HStack>
+          </Box>
+          <Grid
+            templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+            gap={10}
+            justifyItems="center"
+          >
+            {filteredProducts.map((product) => (
+              <Box
+                key={product.id}
+                borderWidth="1px"
+                borderRadius="2xl"
+                overflow="hidden"
+                p={6}
+                boxShadow="2xl"
+                bg="white"
+                maxW="360px"
+                textAlign="center"
+                cursor="pointer"
+                onClick={() => {
+                  setSelectedProduct(product);
+                  setQuantity(1);
+                }}
+              >
+                <Image
+                  src={product.url}
+                  alt={product.descripcion}
+                  objectFit="contain"
+                  width="100%"
+                  height="250px"
+                />
+                <Text
+                  fontSize="2xl"
+                  fontWeight="bold"
+                  mt={1}
+                  color="orange.500"
+                >
+                  ${Number(product.precio || 0).toFixed(2)}
+                </Text>
+                <Button
+                  mt={4}
+                  bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
+                  color="white"
+                  size="lg"
+                  width="full"
+                  _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToCart(product, 1);
+                  }}
+                >
+                  🛒 Añadir al carrito
+                </Button>
+              </Box>
+            ))}
+          </Grid>
+        </>
+      )}
     </Box>
   );
 };
+
+export default ProductsList;

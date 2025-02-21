@@ -1,12 +1,46 @@
-import React from "react";
-import { Box, Flex, Heading, Button, Link, HStack, IconButton, Badge, Container } from "@chakra-ui/react";
+import React, { useState } from "react";
+import {
+  Box,
+  Flex,
+  Heading,
+  Button,
+  Link,
+  HStack,
+  IconButton,
+  Badge,
+  Container,
+  useToast,
+} from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 import { FaShoppingCart } from "react-icons/fa";
+import MyProfile from "./MyProfile"; 
 
-export const Header = ({ toggleCart }) => {  
-  const { logout, cart } = useAuth();
-  
+export const Header = ({ onCartToggle }) => {  
+  const { user, logout, cart } = useAuth();
+  const toast = useToast();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const handleCartClick = () => {
+    if (!user) {
+      toast({
+        render: () => (
+          <Box
+            color="white"
+            p={3}
+            bgGradient="linear(to-r, #ff7e5f, #feb47b)"
+            borderRadius="md"
+            textAlign="center"
+          >
+           ⚠️ Regístrate para comprar nuestros productos
+          </Box>
+        ),
+      });
+    } else {
+      onCartToggle();
+    }
+  };
+
   return (
     <Container maxW="container.xl" px={4}>
       <Box
@@ -54,36 +88,47 @@ export const Header = ({ toggleCart }) => {
             <Link as={RouterLink} to="/" color="white" fontSize="lg">
               Home
             </Link>
-            <Link as={RouterLink} to="/register" color="white" fontSize="lg">
-              Registrarme
-            </Link>
-            <Link as={RouterLink} to="/login" color="white" fontSize="lg">
-              Iniciar Sesión
-            </Link>
-
-            <Button
-              onClick={logout}
-              bgGradient="linear(to-r, #ff7e5f, #feb47b)"
-              color="white"
-              px={6}
-              py={3}
-              fontSize="md"
-              borderRadius="30px"
-              boxShadow="0 4px 15px rgba(255, 126, 95, 0.4)"
-              transition="all 0.3s"
-              _hover={{
-                bgGradient: "linear(to-r, #feb47b, #ff7e5f)",
-                boxShadow: "0 6px 20px rgba(255, 126, 95, 0.6)",
-                transform: "scale(1.05)",
-              }}
-            >
-              Cerrar Sesión
-            </Button>
-
+            {user ? (
+              <>
+                <Button
+                  onClick={() => setIsProfileOpen(true)}
+                  bg="transparent"
+                  color="white"
+                  fontSize="lg"
+                  _hover={{ textDecoration: "underline" }}
+                >
+                  Mis Datos
+                </Button>
+                <Button
+                  onClick={logout}
+                  bgGradient="linear(to-r, #ff7e5f, #feb47b)"
+                  color="white"
+                  px={6}
+                  py={3}
+                  fontSize="md"
+                  borderRadius="30px"
+                  _hover={{
+                    bgGradient: "linear(to-r, #feb47b, #ff7e5f)",
+                    transform: "scale(1.05)",
+                  }}
+                >
+                  Cerrar Sesión
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link as={RouterLink} to="/register" color="white" fontSize="lg">
+                  Registrarse
+                </Link>
+                <Link as={RouterLink} to="/login" color="white" fontSize="lg">
+                  Iniciar Sesión
+                </Link>
+              </>
+            )}
             <Box position="relative">
               <IconButton
                 icon={<FaShoppingCart />}
-                onClick={toggleCart}
+                onClick={handleCartClick}
                 variant="ghost"
                 color="white"
                 fontSize="30px"
@@ -109,6 +154,9 @@ export const Header = ({ toggleCart }) => {
           </HStack>
         </Flex>
       </Box>
+      
+      
+      {isProfileOpen && <MyProfile onClose={() => setIsProfileOpen(false)} />}
     </Container>
   );
 };

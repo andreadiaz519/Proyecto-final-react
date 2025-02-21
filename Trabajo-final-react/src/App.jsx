@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { Box } from "@chakra-ui/react";
 import { Header } from "./components/Header";
 import Routing from "./routes/Routing";
 import { ProductsList } from "./components/ProductsList";
-import Footer from "./components/Footer"; 
-import { AuthProvider } from "./Context/AuthContext"; // ✅ Ruta corregida
-import Cart from "./components/Cart"; // ✅ Importación corregida
+import Footer from "./components/Footer";
+import { AuthProvider } from "./Context/AuthContext";
+import Cart from "./components/Cart";
+import MyProfile from "./components/MyProfile";
 
 function App() {
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
   return (
     <AuthProvider>
       <Box
@@ -31,12 +35,19 @@ function App() {
           zIndex: -1,
         }}
       >
-        <Header />
+        <Header 
+          onCartToggle={() => setIsCartOpen(!isCartOpen)} 
+          onProfileToggle={() => setIsProfileOpen(true)}
+        />
+        
         <Box flex="1" mt={6}>
           <Routing />
-          <ProductsList />
+          {!isProfileOpen && <ProductsList />} 
         </Box>
-        <Cart /> {/* ✅ Se incluye correctamente el carrito */}
+
+        {isProfileOpen && <MyProfile onClose={() => setIsProfileOpen(false)} />} 
+
+        <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
         <Footer />
       </Box>
     </AuthProvider>
