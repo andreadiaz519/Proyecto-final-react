@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Box, Text, Button, Input, FormControl, FormLabel, Icon } from "@chakra-ui/react";
 import { useAuth } from "../Context/AuthContext";
 import { updateProfile } from "firebase/auth";
-import { MdCake } from "react-icons/md"; // Ícono de cumpleaños
-import { MdEmail } from "react-icons/md"; // Ícono de correo electrónico (cartita)
+import { MdCake } from "react-icons/md"; // Icono de cumpleaños
+import { MdEmail } from "react-icons/md"; // Icono de correo electrónico (cartita)
 
 const MyProfile = ({ onClose }) => {
   const { user } = useAuth();
@@ -23,14 +23,14 @@ const MyProfile = ({ onClose }) => {
 
   return (
     <Box
-      width="90%"  // Usamos un 90% del ancho disponible
-      maxW="500px"  // Limite máximo a 500px
+      width="90%" 
+      maxW="500px"
       mx="auto"
-      mt={10}  // Espaciado superior pequeño
-      p={5}  // Padding ajustado
+      mt={10}  
+      p={5} 
       bg="white"
-      borderRadius="md"  // Borde suave
-      boxShadow="md"  // Sombra ligera
+      borderRadius="md" 
+      boxShadow="md"  
       position="fixed"
       top="50%"
       left="50%"
@@ -38,14 +38,14 @@ const MyProfile = ({ onClose }) => {
       zIndex="1000"
     >
       <Text 
-        fontSize="xl"  // Aumenté el tamaño del título
-        fontWeight="bold"  // Negrita
-        textAlign="center"  // Centrado
-        mb={4}  // Espaciado inferior
+        fontSize="xl"  
+        fontWeight="bold" 
+        textAlign="center" 
+        mb={4}  
       >
         Mi Perfil
       </Text>
-      <FormControl mb={3}>  {/* Espaciado entre los campos */}
+      <FormControl mb={3}>  
         <FormLabel>Nombre</FormLabel>
         <Input
           value={displayName}
@@ -54,15 +54,15 @@ const MyProfile = ({ onClose }) => {
         />
       </FormControl>
       <FormControl mb={3}>
-        <FormLabel>Email <Icon as={MdEmail} ml={2} /></FormLabel> {/* Ícono de correo */}
+        <FormLabel>Email <Icon as={MdEmail} ml={2} /></FormLabel>
         <Input value={user.email} isReadOnly />
       </FormControl>
       <FormControl mb={3}>
-        <FormLabel>Fecha de nacimiento <Icon as={MdCake} ml={2} /></FormLabel> {/* Ícono de cumpleaños */}
+        <FormLabel>Fecha de nacimiento <Icon as={MdCake} ml={2} /></FormLabel>
         <Input
           type="date"
           value={birthday}
-          onChange={(e) => setBirthday(e.target.value)} // Actualiza el estado con la fecha
+          onChange={(e) => setBirthday(e.target.value)} 
         />
       </FormControl>
       <Button
