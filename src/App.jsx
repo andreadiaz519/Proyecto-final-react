@@ -11,6 +11,7 @@ import MyProfile from "./components/MyProfile";
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  console.log("App.jsx está renderizando");
 
   return (
     <AuthProvider>

@@ -5,6 +5,7 @@ import { Create } from "../pages/auth/Create";
 import Home from "../pages/Home";
 import MyProfile from "../components/MyProfile";
 
+
 export default function Routing() {
   return (
     <Routes>
