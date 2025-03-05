@@ -137,7 +137,6 @@ export const ProductsList = () => {
             height="300px"
           />
           <Text mt={4} fontSize="xl" fontWeight="bold">
-            {/* Descripción con el tamaño y color modificados */}
             <Text fontSize="sm" color="gray.600">
               {selectedProduct.descripcion}
             </Text>
@@ -180,7 +179,6 @@ export const ProductsList = () => {
         </Box>
       ) : (
         <>
-          {/* Filtros */}
           <Box mb={6}>
             <HStack spacing={4}>
               <Input
@@ -218,11 +216,6 @@ export const ProductsList = () => {
                 bg="white"
                 maxW="360px"
                 textAlign="center"
-                cursor="pointer"
-                onClick={() => {
-                  setSelectedProduct(product);
-                  setQuantity(1);
-                }}
               >
                 <Image
                   src={product.url}
@@ -241,6 +234,17 @@ export const ProductsList = () => {
                 </Text>
                 <Button
                   mt={4}
+                  bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
+                  color="white"
+                  size="lg"
+                  width="full"
+                  _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
+                  onClick={() => setSelectedProduct(product)}
+                >
+                  🔍 Ver más
+                </Button>
+                <Button
+                  mt={2}
                   bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
                   color="white"
                   size="lg"
