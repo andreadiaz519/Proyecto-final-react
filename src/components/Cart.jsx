@@ -9,21 +9,28 @@ import {
   DrawerCloseButton,
   VStack,
   Text,
-  useToast
+  useToast,
+  Button,
+  HStack,
 } from "@chakra-ui/react";
+import { BiCheckCircle } from "react-icons/bi"; // ✅ Ícono bonito
+
 import { useAuth } from "../Context/AuthContext";
 import CartItem from "./CartItem";
-import CartDetails from "./CartDetails";
 
 const Cart = ({ isOpen, onClose }) => {
   const { cart, setCart } = useAuth();
   const toast = useToast();
 
   const removeFromCart = (id) => setCart((prev) => prev.filter((item) => item.id !== id));
+
   const increaseQuantity = (id) =>
     setCart((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity: (item.quantity || 0) + 1 } : item))
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: (item.quantity || 0) + 1 } : item
+      )
     );
+
   const decreaseQuantity = (id) =>
     setCart((prev) =>
       prev.map((item) =>
@@ -35,26 +42,34 @@ const Cart = ({ isOpen, onClose }) => {
     if (cart.length === 0) {
       toast({
         title: "Carrito vacío",
-        description: "Agrega productos para poder comprar.",
+        description: "Agrega productos antes de comprar.",
         status: "warning",
-        duration: 5000,
+        duration: 4000,
         isClosable: true,
-        position: "top-right",
-        variant: "left-accent"
       });
       return;
     }
 
-    setCart([]);
+    setCart([]); // Vaciar carrito
     toast({
-      title: "Compra realizada con éxito!",
-      description: "Gracias por tu compra. Recibirás un correo con los detalles.",
-      status: "success",
-      duration: 5000,
+      duration: 4000,
       isClosable: true,
       position: "top-right",
-      variant: "left-accent"
+      render: () => (
+        <HStack
+          bgGradient="linear(to-r, #FF7E5F, #FEB47B)" // ✅ Color exacto de tu página
+          color="white"
+          p={3}
+          borderRadius="md"
+          fontWeight="bold"
+          spacing={2}
+        >
+          <BiCheckCircle size="24px" /> {/* ✅ Ícono agregado */}
+          <Text>Gracias por tu compra.</Text>
+        </HStack>
+      ),
     });
+    onClose();
   };
 
   const totalPrice = cart.reduce((sum, item) => sum + (item.precio || 0) * (item.quantity || 1), 0);
@@ -65,7 +80,7 @@ const Cart = ({ isOpen, onClose }) => {
       <DrawerContent borderRadius="md" overflow="hidden">
         <DrawerCloseButton />
         <DrawerHeader
-          bgGradient="linear(to-r, #ff7e5f, #feb47b)"
+          bgGradient="linear(to-r, #FF7E5F, #FEB47B)" // ✅ Color exacto corregido
           color="white"
           textAlign="center"
           fontSize="lg"
@@ -91,7 +106,18 @@ const Cart = ({ isOpen, onClose }) => {
           </VStack>
         </DrawerBody>
         <DrawerFooter p={4} bg="gray.100">
-          <CartDetails totalPrice={totalPrice} handlePurchase={handlePurchase} onClose={onClose} />
+          <VStack w="100%">
+            <Text fontWeight="bold">Total: ${totalPrice.toFixed(2)}</Text>
+            <Button
+              w="100%"
+              bgGradient="linear(to-r, #FF7E5F, #FEB47B)" // ✅ Color exacto corregido
+              color="white"
+              _hover={{ bgGradient: "linear(to-r, #FF7E5F, #FEB47B)" }}
+              onClick={handlePurchase}
+            >
+              Comprar
+            </Button>
+          </VStack>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

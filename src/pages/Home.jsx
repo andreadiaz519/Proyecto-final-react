@@ -1,16 +1,28 @@
 import { useEffect, useState } from "react";
-import { getTodos } from "../services/todos";
+import { getTodos } from "../services/todos";  // Asegúrate de que esta función obtenga correctamente los productos
 import { Box, VStack, Text, Heading } from "@chakra-ui/react";
 import { useAuth } from "../Context/AuthContext";
+import { useLocation } from "react-router-dom";  // Importamos useLocation para saber la ruta actual
 
 const Home = () => {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { user } = useAuth();
+  const location = useLocation();  // Para saber en qué ruta estamos
+
+  const [showProductList, setShowProductList] = useState(true);  // Controlar la visibilidad de la lista de productos
 
   useEffect(() => {
-    
+    // Cambia la visibilidad de la lista de productos según la ruta
+    if (location.pathname.includes("/productos/")) {
+      setShowProductList(false);  // Oculta la lista si estamos en un producto individual
+    } else {
+      setShowProductList(true);  // Muestra la lista si estamos en la página principal
+    }
+  }, [location]);  // Este efecto se ejecuta cada vez que cambie la ruta
+
+  useEffect(() => {
     if (!user) {
       setLoading(false);
       return;
@@ -31,7 +43,6 @@ const Home = () => {
     getData();
   }, [user]);
 
-  
   if (!user) {
     return (
       <Box
@@ -68,10 +79,11 @@ const Home = () => {
 
   return (
     <Box>
-      {todos.length > 0 ? (
+      {showProductList && todos.length > 0 ? (  // Solo mostrar la lista si showProductList es true
         todos.map((todo) => (
           <VStack key={todo.id} p={2}>
             <Text>{todo.name}</Text>
+            <a href={`/productos/${todo.id}`}>Ver más</a>  {/* Enlace para ir a la página del producto */}
           </VStack>
         ))
       ) : (

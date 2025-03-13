@@ -1,51 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { useAuth } from "../Context/AuthContext";
+import React, { useState, useEffect } from "react";
+import { Box, Text, Button, Image, Grid, useToast } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 import { getProducts } from "../services/products";
-import {
-  Box,
-  Text,
-  Spinner,
-  Image,
-  Button,
-  Grid,
-  useToast,
-  Input,
-  HStack,
-} from "@chakra-ui/react";
-import { FaCheck } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext"; // Si usas contexto de autenticación
 
-export const ProductsList = () => {
-  const { user, cart, setCart } = useAuth();
+const ProductList = () => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedProduct, setSelectedProduct] = useState(null);
-  const [quantity, setQuantity] = useState(1);
+  const { cart, setCart } = useAuth(); // Aquí gestionamos el carrito
   const toast = useToast();
 
-  // Estados para el filtrado
-  const [searchText, setSearchText] = useState("");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-
   useEffect(() => {
-    if (user) {
-      const fetchProducts = async () => {
-        try {
-          const productList = await getProducts();
-          setProducts(productList);
-        } catch (error) {
-          console.error("Error al obtener los productos:", error);
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchProducts();
-    } else {
-      setLoading(false);
-    }
-  }, [user]);
+    const fetchProducts = async () => {
+      const productList = await getProducts();
+      setProducts(productList);
+    };
 
-  const addToCart = (product, quantity) => {
+    fetchProducts();
+  }, []);
+
+  const addToCart = (product) => {
     setCart((prevCart) => {
       const existingProductIndex = prevCart.findIndex(
         (item) => item.id === product.id
@@ -53,11 +26,11 @@ export const ProductsList = () => {
       if (existingProductIndex !== -1) {
         return prevCart.map((item, index) =>
           index === existingProductIndex
-            ? { ...item, quantity: item.quantity + quantity }
+            ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        return [...prevCart, { ...product, quantity }];
+        return [...prevCart, { ...product, quantity: 1 }];
       }
     });
 
@@ -76,40 +49,15 @@ export const ProductsList = () => {
           maxW="300px"
           mx="auto"
         >
-          <FaCheck style={{ marginRight: "8px", fontSize: "20px" }} />
           <Text fontWeight="bold" fontSize="lg">
-            ¡Agregado al carrito!
+            ¡Producto añadido al carrito!
           </Text>
         </Box>
       ),
       duration: 2000,
       isClosable: true,
     });
-
-    setSelectedProduct(null);
   };
-
-  if (loading) return <Spinner size="xl" />;
-
-  if (!user) {
-    return (
-      <Box textAlign="center" mt={10}>
-        <Text fontSize="xl" color="red.500"></Text>
-      </Box>
-    );
-  }
-
-  //Filtrado de productos
-  const filteredProducts = products.filter((product) => {
-    const matchesDescription = product.descripcion
-      .toLowerCase()
-      .includes(searchText.toLowerCase());
-    const matchesMinPrice =
-      minPrice === "" || product.precio >= parseFloat(minPrice);
-    const matchesMaxPrice =
-      maxPrice === "" || product.precio <= parseFloat(maxPrice);
-    return matchesDescription && matchesMinPrice && matchesMaxPrice;
-  });
 
   return (
     <Box bg="#f8f9fa" minH="100vh" p={10} pb={20}>
@@ -117,153 +65,72 @@ export const ProductsList = () => {
         🛍️ Productos Disponibles
       </Text>
 
-      {selectedProduct ? (
-        <Box
-          borderWidth="1px"
-          borderRadius="2xl"
-          overflow="hidden"
-          p={6}
-          boxShadow="2xl"
-          bg="white"
-          maxW="500px"
-          mx="auto"
-          textAlign="center"
-        >
-          <Image
-            src={selectedProduct.url}
-            alt={selectedProduct.descripcion}
-            objectFit="contain"
-            width="100%"
-            height="300px"
-          />
-          <Text mt={4} fontSize="xl" fontWeight="bold">
-            <Text fontSize="sm" color="gray.600">
-              {selectedProduct.descripcion}
-            </Text>
-          </Text>
-          <Text fontSize="2xl" fontWeight="bold" mt={1} color="orange.500">
-            ${Number(selectedProduct.precio || 0).toFixed(2)}
-          </Text>
-          <Box mt={4}>
-            <Input
-              type="number"
-              value={quantity}
-              onChange={(e) =>
-                setQuantity(Math.max(1, parseInt(e.target.value) || 1))
-              }
-              min={1}
-              width="80px"
-              textAlign="center"
+      <Grid
+        templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
+        gap={10}
+        justifyItems="center"
+      >
+        {products.map((product) => (
+          <Box
+            key={product.id}
+            borderWidth="1px"
+            borderRadius="xl"
+            overflow="hidden"
+            p={6}
+            boxShadow="2xl"
+            bg="white"
+            maxW="360px"
+            textAlign="center"
+            display="flex"
+            flexDirection="column"
+            justifyContent="space-between"
+          >
+            <Image
+              src={product.url}
+              alt={product.descripcion}
+              objectFit="contain"
+              width="100%"
+              height="250px"
+              borderRadius="lg"
             />
-          </Box>
-          <Button
-            mt={4}
-            bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
-            color="white"
-            size="lg"
-            width="full"
-            _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
-            onClick={() => addToCart(selectedProduct, quantity)}
-          >
-            🛒 Añadir al carrito
-          </Button>
-          <Button
-            mt={2}
-            colorScheme="red"
-            variant="outline"
-            width="full"
-            onClick={() => setSelectedProduct(null)}
-          >
-            Volver
-          </Button>
-        </Box>
-      ) : (
-        <>
-          <Box mb={6}>
-            <HStack spacing={4}>
-              <Input
-                placeholder="Buscar por descripción..."
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-              />
-              <Input
-                placeholder="Precio mínimo"
-                type="number"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-              />
-              <Input
-                placeholder="Precio máximo"
-                type="number"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-              />
-            </HStack>
-          </Box>
-          <Grid
-            templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
-            gap={10}
-            justifyItems="center"
-          >
-            {filteredProducts.map((product) => (
-              <Box
-                key={product.id}
-                borderWidth="1px"
-                borderRadius="2xl"
-                overflow="hidden"
-                p={6}
-                boxShadow="2xl"
-                bg="white"
-                maxW="360px"
-                textAlign="center"
+            <Text
+              fontSize="2xl"
+              fontWeight="bold"
+              mt={1}
+              color="orange.500"
+            >
+              ${Number(product.precio || 0).toFixed(2)}
+            </Text>
+
+            <Link to={`/productos/${product.id}`}>
+              <Button
+                mt={4}
+                bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
+                color="white"
+                size="sm"
+                width="full"
+                _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
               >
-                <Image
-                  src={product.url}
-                  alt={product.descripcion}
-                  objectFit="contain"
-                  width="100%"
-                  height="250px"
-                />
-                <Text
-                  fontSize="2xl"
-                  fontWeight="bold"
-                  mt={1}
-                  color="orange.500"
-                >
-                  ${Number(product.precio || 0).toFixed(2)}
-                </Text>
-                <Button
-                  mt={4}
-                  bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
-                  color="white"
-                  size="lg"
-                  width="full"
-                  _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
-                  onClick={() => setSelectedProduct(product)}
-                >
-                  🔍 Ver más
-                </Button>
-                <Button
-                  mt={2}
-                  bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
-                  color="white"
-                  size="lg"
-                  width="full"
-                  _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addToCart(product, 1);
-                  }}
-                >
-                  🛒 Añadir al carrito
-                </Button>
-              </Box>
-            ))}
-          </Grid>
-        </>
-      )}
+                🔍 Ver más
+              </Button>
+            </Link>
+
+            <Button
+              mt={4}
+              bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
+              color="white"
+              size="sm"
+              width="full"
+              _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
+              onClick={() => addToCart(product)}
+            >
+              🛒 Añadir al carrito
+            </Button>
+          </Box>
+        ))}
+      </Grid>
     </Box>
   );
 };
 
-export default ProductsList;
+export default ProductList;

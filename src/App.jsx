@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Box } from "@chakra-ui/react";
 import { Header } from "./components/Header";
-import Routing from "./routes/Routing";
-import { ProductsList } from "./components/ProductsList";
+import Routing from "/src/routes/Routing";
+import ProductsList from './components/ProductsList';
 import Footer from "./components/Footer";
 import { AuthProvider } from "./Context/AuthContext";
 import Cart from "./components/Cart";
@@ -11,7 +11,6 @@ import MyProfile from "./components/MyProfile";
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  console.log("App.jsx está renderizando");
 
   return (
     <AuthProvider>
@@ -43,7 +42,7 @@ function App() {
         
         <Box flex="1" mt={6}>
           <Routing />
-          {!isProfileOpen && <ProductsList />} 
+          {!isProfileOpen && <ProductsList />}
         </Box>
 
         {isProfileOpen && <MyProfile onClose={() => setIsProfileOpen(false)} />} 
