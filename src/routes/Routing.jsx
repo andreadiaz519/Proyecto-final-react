@@ -14,7 +14,7 @@ export default function Routing() {
       <Route path="/login" element={<Login />} />
       <Route path="/my-profile" element={<MyProfile />} />
       <Route path="/create" element={<Create />} />
-      <Route path="/productos/:id" element={<CartDetails />} />  {/* Ruta dinámica */}
+      <Route path="/productos/:id" element={<CartDetails />} /> 
     </Routes>
   );
 }

@@ -51,21 +51,21 @@ const Cart = ({ isOpen, onClose }) => {
       return;
     }
 
-    setCart([]); // Vaciar carrito
+    setCart([]); 
     toast({
       duration: 4000,
       isClosable: true,
       position: "top-right",
       render: () => (
         <HStack
-          bgGradient="linear(to-r, #FF7E5F, #FEB47B)" // ✅ Color exacto de tu página
+          bgGradient="linear(to-r, #FF7E5F, #FEB47B)" 
           color="white"
           p={3}
           borderRadius="md"
           fontWeight="bold"
           spacing={2}
         >
-          <BiCheckCircle size="24px" /> {/* ✅ Ícono agregado */}
+          <BiCheckCircle size="24px" /> 
           <Text>Gracias por tu compra.</Text>
         </HStack>
       ),
@@ -74,7 +74,7 @@ const Cart = ({ isOpen, onClose }) => {
   };
 
   const handleContinueShopping = () => {
-    onClose(); // Cierra el carrito
+    onClose(); 
   };
 
   const totalPrice = cart.reduce((sum, item) => sum + (item.precio || 0) * (item.quantity || 1), 0);
@@ -85,7 +85,7 @@ const Cart = ({ isOpen, onClose }) => {
       <DrawerContent borderRadius="md" overflow="hidden">
         <DrawerCloseButton />
         <DrawerHeader
-          bgGradient="linear(to-r, #FF7E5F, #FEB47B)" // ✅ Color exacto corregido
+          bgGradient="linear(to-r, #FF7E5F, #FEB47B)" 
           color="white"
           textAlign="center"
           fontSize="lg"
@@ -116,7 +116,7 @@ const Cart = ({ isOpen, onClose }) => {
             <Stack direction="row" spacing={2} w="100%">
               <Button
                 flex={1}
-                bgGradient="linear(to-r, #FF7E5F, #FEB47B)" // ✅ Color exacto corregido
+                bgGradient="linear(to-r, #FF7E5F, #FEB47B)" 
                 color="white"
                 px={4}
                 py={2}

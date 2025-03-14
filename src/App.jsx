@@ -7,12 +7,12 @@ import Footer from "./components/Footer";
 import { AuthProvider } from "./Context/AuthContext";
 import Cart from "./components/Cart";
 import MyProfile from "./components/MyProfile";
-import { useLocation } from "react-router-dom";  // 🔹 Importar useLocation
+import { useLocation } from "react-router-dom";  
 
 function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const location = useLocation();  // 🔹 Obtener la ruta actual
+  const location = useLocation();  
 
   return (
     <AuthProvider>
@@ -44,7 +44,7 @@ function App() {
         
         <Box flex="1" mt={6}>
           <Routing />
-          {/* ✅ Solo mostrar ProductsList en la ruta "/" */}
+          
           {location.pathname === "/" && !isProfileOpen && <ProductsList />}
         </Box>
 

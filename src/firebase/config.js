@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// ✅ SOLUCIÓN: Solo usa import.meta.env (sin process.env)
+
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_DOMAIN,
@@ -12,7 +12,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-console.log("🔥 Firebase Config:", firebaseConfig); // Verifica en la consola
+console.log("🔥 Firebase Config:", firebaseConfig); 
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);

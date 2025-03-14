@@ -1,14 +1,14 @@
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 
-// Obtener todos los productos
+
 export const getProducts = async () => {
   try {
     const querySnapshot = await getDocs(collection(db, "productos"));
     let products = [];
 
     querySnapshot.forEach((doc) => {
-      const productData = { id: doc.id, ...doc.data() }; // 🔹 Agregar el ID del producto
+      const productData = { id: doc.id, ...doc.data() }; 
       products.push(productData);
     });
 
@@ -29,7 +29,7 @@ export const getProductById = async (productId) => {
     const productSnap = await getDoc(productRef);
 
     if (productSnap.exists()) {
-      const productData = { id: productSnap.id, ...productSnap.data() }; // 🔹 Agregar el ID
+      const productData = { id: productSnap.id, ...productSnap.data() }; 
       console.log("Producto obtenido por ID:", productData);
       return productData;
     } else {
