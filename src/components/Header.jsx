@@ -14,7 +14,7 @@ import {
   Collapse,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { FaShoppingCart, FaBars, FaTimes } from "react-icons/fa";
 import MyProfile from "./MyProfile";
 
