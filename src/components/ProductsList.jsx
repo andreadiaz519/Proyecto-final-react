@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, Text, Button, Image, Grid, Spinner } from "@chakra-ui/react";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext.jsx";
 import { getProducts } from "../services/products";
 import { FaCheck } from "react-icons/fa";
 import { useToast } from "@chakra-ui/react";
