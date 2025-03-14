@@ -1,38 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { Box, Text, Button, Image, Grid, useToast } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Box, Text, Button, Image, Grid, Spinner } from "@chakra-ui/react";
+import { useAuth } from "../context/AuthContext";
 import { getProducts } from "../services/products";
-import { useAuth } from "../context/AuthContext"; // Si usas contexto de autenticación
+import { FaCheck } from "react-icons/fa";
+import { useToast } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
-const ProductList = () => {
+const ProductsList = () => {
+  const { user, cart, setCart } = useAuth();
   const [products, setProducts] = useState([]);
-  const { cart, setCart } = useAuth(); // Aquí gestionamos el carrito
+  const [loading, setLoading] = useState(true);
   const toast = useToast();
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      const productList = await getProducts();
-      setProducts(productList);
-    };
+    if (user) {
+      const fetchProducts = async () => {
+        try {
+          const productList = await getProducts();
+          setProducts(productList);
+        } catch (error) {
+          console.error("Error al obtener los productos:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
 
-    fetchProducts();
-  }, []);
+      fetchProducts();
+    }
+  }, [user]);
 
   const addToCart = (product) => {
-    setCart((prevCart) => {
-      const existingProductIndex = prevCart.findIndex(
-        (item) => item.id === product.id
-      );
-      if (existingProductIndex !== -1) {
-        return prevCart.map((item, index) =>
-          index === existingProductIndex
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        return [...prevCart, { ...product, quantity: 1 }];
-      }
-    });
+    setCart((prevCart) => [...prevCart, { ...product, quantity: 1 }]);
 
     toast({
       render: () => (
@@ -42,15 +40,11 @@ const ProductList = () => {
           bgGradient="linear(to-r, #ff7e5f, #feb47b)"
           borderRadius="md"
           boxShadow="xl"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
           textAlign="center"
-          maxW="300px"
-          mx="auto"
         >
+          <FaCheck style={{ marginRight: "8px", fontSize: "20px" }} />
           <Text fontWeight="bold" fontSize="lg">
-            ¡Producto añadido al carrito!
+            ¡Agregado al carrito!
           </Text>
         </Box>
       ),
@@ -59,6 +53,16 @@ const ProductList = () => {
     });
   };
 
+  if (loading) return <Spinner size="xl" />;
+
+  if (!user) {
+    return (
+      <Box textAlign="center" mt={10}>
+        <Text fontSize="xl" color="red.500">Debe iniciar sesión</Text>
+      </Box>
+    );
+  }
+
   return (
     <Box bg="#f8f9fa" minH="100vh" p={10} pb={20}>
       <Text fontSize="3xl" fontWeight="bold" textAlign="center" mb={6}>
@@ -66,62 +70,58 @@ const ProductList = () => {
       </Text>
 
       <Grid
-        templateColumns={{ base: "1fr", md: "repeat(3, 1fr)" }}
-        gap={10}
-        justifyItems="center"
+        templateColumns={{
+          base: "1fr", 
+          sm: "repeat(auto-fit, minmax(250px, 1fr))", 
+        }}
+        gap={8} 
+        justifyContent="center"
+        alignItems="center"
       >
         {products.map((product) => (
           <Box
             key={product.id}
             borderWidth="1px"
-            borderRadius="xl"
+            borderRadius="2xl"
             overflow="hidden"
             p={6}
             boxShadow="2xl"
             bg="white"
-            maxW="360px"
             textAlign="center"
-            display="flex"
-            flexDirection="column"
-            justifyContent="space-between"
+            maxW="300px"
+            mx="auto"
           >
             <Image
               src={product.url}
               alt={product.descripcion}
-              objectFit="contain"
+              objectFit="cover"
               width="100%"
               height="250px"
-              borderRadius="lg"
             />
-            <Text
-              fontSize="2xl"
-              fontWeight="bold"
-              mt={1}
-              color="orange.500"
-            >
+            <Text fontSize="2xl" fontWeight="bold" mt={2} color="orange.500">
               ${Number(product.precio || 0).toFixed(2)}
             </Text>
 
             <Link to={`/productos/${product.id}`}>
               <Button
                 mt={4}
-                bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
+                bgGradient="linear(to-r, #ff7e5f, #feb47b)"
                 color="white"
-                size="sm"
+                size="lg"
                 width="full"
-                _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
+                _hover={{ bgGradient: "linear(to-r, #feb47b, #ff7e5f)", transform: "scale(1.05)", transition: "0.2s" }}
               >
                 🔍 Ver más
               </Button>
             </Link>
 
             <Button
-              mt={4}
-              bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
+              mt={2}
+              bgGradient="linear(to-r, #ff7e5f, #feb47b)"
               color="white"
-              size="sm"
+              size="lg"
               width="full"
-              _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
+              _hover={{ bgGradient: "linear(to-r, #feb47b, #ff7e5f)", transform: "scale(1.05)", transition: "0.2s" }}
               onClick={() => addToCart(product)}
             >
               🛒 Añadir al carrito
@@ -133,4 +133,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default ProductsList;

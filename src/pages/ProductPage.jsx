@@ -8,11 +8,11 @@ const ProductPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  console.log("📌 useParams() ID recibido:", id); // Verifica si el ID llega
+  console.log(" useParams() ID recibido:", id); 
 
   useEffect(() => {
     if (!id) {
-      console.error("❌ No se recibió un ID en useParams()");
+      console.error(" No se recibió un ID en useParams()");
       return;
     }
 
@@ -20,10 +20,10 @@ const ProductPage = () => {
       setLoading(true);
       try {
         const data = await getProductById(id);
-        console.log("📌 Producto recibido en ProductPage:", data); // Verifica si el producto se recibe
+        console.log(" Producto recibido en ProductPage:", data); 
         setProduct(data);
       } catch (error) {
-        console.error("❌ Error al obtener el producto:", error);
+        console.error(" Error al obtener el producto:", error);
       }
       setLoading(false);
     };

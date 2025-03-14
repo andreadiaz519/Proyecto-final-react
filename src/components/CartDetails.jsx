@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Box, Text, Button, Image, Input, useToast } from "@chakra-ui/react";
-import { FaCheck, FaArrowLeft, FaShoppingCart } from "react-icons/fa";  // Importando el icono del carrito
-import { useParams } from "react-router-dom";
+import { FaCheck, FaArrowLeft, FaShoppingCart } from "react-icons/fa";  
+import { useParams, useNavigate } from "react-router-dom";
 import { getProductById } from "../services/products";
 import { useAuth } from "../context/AuthContext";
 
 const CartDetails = () => {
-  const { id } = useParams();  // Obtenemos el id del producto de la URL
-  const { cart, setCart } = useAuth();  // Gestionamos el carrito de compras
-  const [product, setProduct] = useState(null);  // Estado para el producto
-  const [quantity, setQuantity] = useState(1);  // Estado para la cantidad
+  const { id } = useParams();  
+  const navigate = useNavigate();
+  const { cart, setCart } = useAuth();  
+  const [product, setProduct] = useState(null);  
+  const [quantity, setQuantity] = useState(1);  
   const toast = useToast();
 
   useEffect(() => {
     const fetchProduct = async () => {
-      const productData = await getProductById(id);  // Obtenemos el producto por su id
+      const productData = await getProductById(id);  
       setProduct(productData);
     };
 
@@ -77,10 +78,7 @@ const CartDetails = () => {
       mx="auto"
       textAlign="center"
       mt="50px"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      mb={6}
+      mb="50px"
     >
       <Image
         src={product.url}
@@ -89,6 +87,7 @@ const CartDetails = () => {
         width="90%"
         maxHeight="300px"
         borderRadius="md"
+        mt={6}
       />
       <Text fontSize="md" color="black" mt={4} px={2}>
         {product.descripcion}
@@ -112,26 +111,26 @@ const CartDetails = () => {
         />
       </Box>
 
-      <Box display="flex" width="100%" justifyContent="space-between" gap={4}>
+      <Box display="flex" width="100%" justifyContent="space-between" gap={4} mb={6}>  
         <Button
-          bgGradient="linear(to-r, #ff9a9e, #fad0c4)"
+          bgGradient="linear(to-r, #ff7e5f, #feb47b)"
           color="white"
           size="md"
           width="48%"
-          _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
+          _hover={{ bgGradient: "linear(to-r, #feb47b, #ff7e5f)", transform: "scale(1.05)", transition: "0.2s" }}
           onClick={() => addToCart(product, quantity)}
         >
-          <FaShoppingCart style={{ marginRight: "8px" }} />  {/* Icono de carrito */}
+          <FaShoppingCart style={{ marginRight: "8px" }} />
           Añadir al carrito
         </Button>
 
         <Button
-          bgGradient="linear(to-r, #ff9a9e, #fad0c4)"  // Degradado en el botón Volver
+          bgGradient="linear(to-r, #ff7e5f, #feb47b)"
           color="white"
           size="md"
           width="48%"
-          _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
-          onClick={() => window.history.back()}
+          _hover={{ bgGradient: "linear(to-r, #feb47b, #ff7e5f)", transform: "scale(1.05)", transition: "0.2s" }}
+          onClick={() => navigate("/")}
         >
           <FaArrowLeft style={{ marginRight: "8px" }} />
           Volver

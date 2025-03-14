@@ -12,6 +12,7 @@ import {
   useToast,
   Button,
   HStack,
+  Stack,
 } from "@chakra-ui/react";
 import { BiCheckCircle } from "react-icons/bi"; // ✅ Ícono bonito
 
@@ -72,6 +73,10 @@ const Cart = ({ isOpen, onClose }) => {
     onClose();
   };
 
+  const handleContinueShopping = () => {
+    onClose(); // Cierra el carrito
+  };
+
   const totalPrice = cart.reduce((sum, item) => sum + (item.precio || 0) * (item.quantity || 1), 0);
 
   return (
@@ -108,15 +113,38 @@ const Cart = ({ isOpen, onClose }) => {
         <DrawerFooter p={4} bg="gray.100">
           <VStack w="100%">
             <Text fontWeight="bold">Total: ${totalPrice.toFixed(2)}</Text>
-            <Button
-              w="100%"
-              bgGradient="linear(to-r, #FF7E5F, #FEB47B)" // ✅ Color exacto corregido
-              color="white"
-              _hover={{ bgGradient: "linear(to-r, #FF7E5F, #FEB47B)" }}
-              onClick={handlePurchase}
-            >
-              Comprar
-            </Button>
+            <Stack direction="row" spacing={2} w="100%">
+              <Button
+                flex={1}
+                bgGradient="linear(to-r, #FF7E5F, #FEB47B)" // ✅ Color exacto corregido
+                color="white"
+                px={4}
+                py={2}
+                fontSize="sm"
+                fontWeight="bold"
+                borderRadius="md"
+                _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
+                onClick={handlePurchase}
+              >
+                Comprar
+              </Button>
+              <Button
+                flex={1}
+                bgGradient="linear(to-r, #FF7E5F, #FEB47B)"
+                color="white"
+                px={4}
+                py={2}
+                fontSize="sm"
+                fontWeight="bold"
+                borderRadius="md"
+                textAlign="center"
+                whiteSpace="pre-line" // Permite el salto de línea
+                _hover={{ transform: "scale(1.05)", transition: "0.2s" }}
+                onClick={handleContinueShopping}
+              >
+                🛒 Seguir{"\n"}comprando
+              </Button>
+            </Stack>
           </VStack>
         </DrawerFooter>
       </DrawerContent>
