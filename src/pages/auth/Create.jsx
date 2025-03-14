@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createTodo } from "../../services/todos";
-import { useAuth } from "../../Context/AuthContext";  
+import { useAuth } from "../../context/AuthContext";  
 import { Box, Button, Heading, Input } from "@chakra-ui/react";
 
 export const Create = () => {

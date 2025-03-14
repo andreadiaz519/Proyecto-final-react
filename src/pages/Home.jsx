@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getTodos } from "../services/todos";  // Asegúrate de que esta función obtenga correctamente los productos
 import { Box, VStack, Text, Heading } from "@chakra-ui/react";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { useLocation } from "react-router-dom";  // Importamos useLocation para saber la ruta actual
 
 const Home = () => {

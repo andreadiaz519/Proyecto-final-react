@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { BiCheckCircle } from "react-icons/bi"; // ✅ Ícono bonito
 
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import CartItem from "./CartItem";
 
 const Cart = ({ isOpen, onClose }) => {

@@ -15,7 +15,7 @@ import {
   AlertDialogBody,
   AlertDialogFooter,
 } from "@chakra-ui/react";
-import { useAuth } from "../Context/AuthContext";
+import { useAuth } from "../context/AuthContext";
 import { updateProfile } from "firebase/auth";
 import { MdCake, MdEmail } from "react-icons/md";
 
