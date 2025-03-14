@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { ChakraProvider } from "@chakra-ui/react";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
-import { AuthProvider } from "./Context/AuthContext"; 
+import { AuthProvider } from "./context/AuthContext"; 
 
 console.log("✅ main.jsx se está ejecutando");
 

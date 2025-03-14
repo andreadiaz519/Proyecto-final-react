@@ -4,7 +4,7 @@ import { Header } from "./components/Header";
 import Routing from "/src/routes/Routing";
 import ProductsList from './components/ProductsList';
 import Footer from "./components/Footer";
-import { AuthProvider } from "./Context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import Cart from "./components/Cart";
 import MyProfile from "./components/MyProfile";
 import { useLocation } from "react-router-dom";  
